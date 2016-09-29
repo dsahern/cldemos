@@ -44,31 +44,31 @@ the host nodes -- either the host os or inside a docker container.
 
 Command Sequence
 ----------------
-# bring up nodes
-vagrant up --no-parallel 2>&1 | tee vagrant-up.log
+bring up nodes
+    vagrant up --no-parallel 2>&1 | tee vagrant-up.log
 
-# configure spine and leaf nodes
-ansible-playbook configure.yml -l spine-*
-ansible-playbook configure.yml -l leaf-*
+configure spine and leaf nodes
+    ansible-playbook configure.yml -l spine-*
+    ansible-playbook configure.yml -l leaf-*
 
-# configure odd hosts to use bridges for container networking
-ansible-playbook configure.yml -e "net=bridge" -l host-[1-4]1
+configure odd hosts to use bridges for container networking
+    ansible-playbook configure.yml -e "net=bridge" -l host-[1-4]1
 
-# configure even hosts use veth and /32 for container networking
-ansible-playbook configure.yml -e "net=veth" -l host-[1-4]2
+configure even hosts use veth and /32 for container networking
+    ansible-playbook configure.yml -e "net=veth" -l host-[1-4]2
 
-# Start containers on hosts as desired
-#
-# e.g., create the first set of containers on all hosts that
-#       are connected to VRF red
-./run-host-cmd -v red -n 1
+Start containers on hosts as desired
 
-# start second set
-./run-host-cmd -v red -n 2
+e.g., create the first set of containers on all hosts that
+      are connected to VRF red
+    ./run-host-cmd -v red -n 1
 
-# similarly for VRF blue
-./run-host-cmd -v blue -n 1
-./run-host-cmd -v blue -n 2
+Start second set
+    ./run-host-cmd -v red -n 2
+
+Similarly for VRF blue
+    ./run-host-cmd -v blue -n 1
+    ./run-host-cmd -v blue -n 2
 
 
 Container Addresses
