@@ -1,0 +1,22 @@
+
+auto red
+iface red
+    address 10.0.2.1/32
+    vrf-table 1001
+
+auto blue
+iface blue
+    address 10.0.2.2/32
+    vrf-table 1002
+
+%for i in range(1,5):
+auto swp${i}.10
+iface swp${i}.10
+    vrf red
+%endfor
+
+%for i in range(1,5):
+auto swp${i}.20
+iface swp${i}.20
+    vrf blue
+%endfor

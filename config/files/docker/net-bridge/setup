@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# 172.16.${N}.0 where N = M + ${HOSTID}, M = 100 for red and 200 for blue
+# networks:
+#   1   0-15
+#   2  16-31
+# ...
+
+cat > /root/docker-cmds <<EOF
+#!/bin/sh -e
+
+HOST=\$(hostname)
+HOSTID=\${HOST/host-/}
+
+VRF="\$1"
+CONID="\$2"
+
+if [ -z "\${VRF}" ]; then
+	# initialization
+	for vrf in red blue
+	do
+
+		case "\$vrf" in
+			red)  N=\$((100 + \${HOSTID}));;
+			blue) N=\$((200 + \${HOSTID}));;
+		esac
+
+		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.0/28 --ipv6 br-\${vrf}-1)
+		if [ \$? -eq 0 ]; then
+			ip link set br-\${brid:0:12} master \${vrf}
+		fi
+
+		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.16/28 --ipv6 br-\${vrf}-2)
+		if [ \$? -eq 0 ]; then
+			ip link set br-\${brid:0:12} master \${vrf}
+		fi
+
+	done
+else
+	docker run -itd --net=br-\${VRF}-\${CONID} --name deb-\${VRF}-\${CONID} debian /bin/bash
+fi
+
+EOF
+
+exit 0

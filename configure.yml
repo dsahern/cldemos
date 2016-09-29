@@ -1,0 +1,43 @@
+---
+- hosts: all
+  any_errors_fatal: true
+  tasks:
+
+  - name: Create groups of hosts
+    group_by: key="{{ inventory_hostname.split('-')[0] }}"
+
+  - name: Create routers group
+    group_by: key='routers'
+    when: "{{ not inventory_hostname | search('^host-') }}"
+
+- hosts: '!host*'
+  any_errors_fatal: true
+  tasks:
+
+  - name: Get my node ID
+    set_fact:
+      my_node_id: "{{ inventory_hostname.split('-')[1] }}"
+    tags:
+      - compute
+      - always
+
+  - name: Re-get system facts now that interfaces have been configured
+    action: setup
+    
+- hosts: 'spine-*'
+  user: cumulus
+  become: yes
+  roles:
+    - spine
+
+- hosts: 'leaf-*'
+  user: cumulus
+  become: yes
+  roles:
+    - leaf
+
+- hosts: 'host-*'
+  user: cumulus
+  become: yes
+  roles:
+    - host

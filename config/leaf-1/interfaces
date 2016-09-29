@@ -1,0 +1,40 @@
+# mako-render /etc/network/interfaces.d/vagrant.intf
+
+auto red
+iface red
+    vrf-table 1001
+
+auto blue
+iface blue
+    vrf-table 1002
+
+# leaf number
+<% n = 1 %>
+
+%for i in range(1,3):
+auto swp${i}.10
+iface swp${i}.10
+    vrf red
+%endfor
+
+%for i in range(1,3):
+auto swp${i}.20
+iface swp${i}.20
+    vrf blue
+%endfor
+
+# .10 addresses are 10.1.n.{0,16,32,48}
+%for i in range(3,7):
+auto swp${i}.10
+iface swp${i}.10
+    address 10.1.${n}.${(i-3)*16}/31
+    vrf red
+%endfor
+
+# .20 addresses are 10.1.n.{2,18,34,50}
+%for i in range(3,7):
+auto swp${i}.20
+iface swp${i}.20
+    address 10.1.${n}.${(i-3)*16 + 2}/31
+    vrf blue
+%endfor

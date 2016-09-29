@@ -1,0 +1,47 @@
+
+graph dc {
+   "spine-1"   [os="CumulusCommunity/cumulus-vx" function="spine" memory="512" config="./helper_scripts/config_switch.sh"]
+   "spine-2"   [os="CumulusCommunity/cumulus-vx" function="spine" memory="512" config="./helper_scripts/config_switch.sh"]
+
+   "leaf-1"   [os="CumulusCommunity/cumulus-vx" function="leaf" memory="512"  config="./helper_scripts/config_switch.sh"]
+   "leaf-2"   [os="CumulusCommunity/cumulus-vx" function="leaf" memory="512"  config="./helper_scripts/config_switch.sh"]
+   "leaf-3"   [os="CumulusCommunity/cumulus-vx" function="leaf" memory="512"  config="./helper_scripts/config_switch.sh"]
+   "leaf-4"   [os="CumulusCommunity/cumulus-vx" function="leaf" memory="512"  config="./helper_scripts/config_switch.sh"]
+
+    "host-11"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-12"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-21"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-22"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-31"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-32"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-41"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+    "host-42"    [os="boxcutter/ubuntu1604" function="host"  memory="512" config="./helper_scripts/config_server.sh"]
+
+    "leaf-1":"swp1" -- "spine-1":"swp1"
+    "leaf-1":"swp2" -- "spine-2":"swp1"
+    "leaf-1":"swp3" -- "host-11":"eth1"
+    "leaf-1":"swp4" -- "host-12":"eth1"
+    "leaf-1":"swp5" -- "host-21":"eth1"
+    "leaf-1":"swp6" -- "host-22":"eth1"
+
+    "leaf-2":"swp1" -- "spine-1":"swp2"
+    "leaf-2":"swp2" -- "spine-2":"swp2"
+    "leaf-2":"swp3" -- "host-11":"eth2"
+    "leaf-2":"swp4" -- "host-12":"eth2"
+    "leaf-2":"swp5" -- "host-21":"eth2"
+    "leaf-2":"swp6" -- "host-22":"eth2"
+
+    "leaf-3":"swp1" -- "spine-1":"swp3"
+    "leaf-3":"swp2" -- "spine-2":"swp3"
+    "leaf-3":"swp3" -- "host-31":"eth1"
+    "leaf-3":"swp4" -- "host-32":"eth1"
+    "leaf-3":"swp5" -- "host-41":"eth1"
+    "leaf-3":"swp6" -- "host-42":"eth1"
+
+    "leaf-4":"swp1" -- "spine-1":"swp4"
+    "leaf-4":"swp2" -- "spine-2":"swp4"
+    "leaf-4":"swp3" -- "host-31":"eth2"
+    "leaf-4":"swp4" -- "host-32":"eth2"
+    "leaf-4":"swp5" -- "host-41":"eth2"
+    "leaf-4":"swp6" -- "host-42":"eth2"
+}

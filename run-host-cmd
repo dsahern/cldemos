@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# use ansible to run commands on the hosts
+
+usage()
+{
+	cat <<EOF
+run-cmd OPTS
+
+OPTS
+    -v vrf     VRF of interest (red or blue)
+    -n id      container set (1 or 2)
+    -h host    hosts to run command on (default: all hosts)
+    -d cmd     command to run under docker exec (default: start containers)
+    -c cmd     command to run in host
+EOF
+}
+
+################################################################################
+#
+
+HOST='host-*'
+CMD=
+
+while getopts :v:n:h:c:d: o
+do
+    case $o in
+        v) VRF=$OPTARG;;
+        n) N=$OPTARG;;
+        h) HOST=$OPTARG;;
+	d) DOCK_CMD=$OPTARG;;
+	c) CMD=$OPTARG;;
+        *) usage; exit 1;;
+    esac
+done
+
+if [ -z "$CMD" ]; then
+	if [ -z "$VRF" -o -z "$N" ]; then
+		usage
+		exit 1
+	fi
+
+	# start containers
+	if [ -z "$DOCK_CMD" ]; then
+		CMD="bash /root/docker-cmds ${VRF} ${N}"
+	else
+		CMD="docker exec -t deb-${VRF}-${N} ${DOCK_CMD}"
+	fi
+fi
+
+ansible $HOST -u root -b -a "$CMD"

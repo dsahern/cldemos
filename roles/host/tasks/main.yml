@@ -1,0 +1,84 @@
+#
+# sysctl settings. since sysctl throws output to stderr have to ignore errors
+#
+- name: sysctl changes (1/2)
+  copy: src=config/files/sysctl.d/99quagga_defaults.conf dest=/etc/sysctl.d/99quagga_defaults.conf
+
+- name: sysctl changes (2/2)
+  command: sysctl -p /etc/sysctl.d/99quagga_defaults.conf
+  ignore_errors: yes
+  
+#
+# configure networking and use ifupdown2
+#
+- name: copy interfaces
+  copy: src=config/{{ansible_hostname}}/interfaces dest=/etc/network/interfaces.d/vagrant.intf
+  
+# update_cache=yes -- done by helper_script
+- name: install ifupdown2 dependencies (1/3)
+  apt: name=python-argcomplete
+
+- name: install ifupdown2 dependencies (2/3)
+  apt: name=python-ipaddr
+
+- name: install ifupdown2 dependencies (3/3)
+  apt: name=python-pkg-resources
+
+- name: copy ifupdown2 package
+  copy: src=config/files/packages/ifupdown2_1.1-cl3u3_all.deb dest=/tmp
+
+- name: install ifupdown2 package
+  command: dpkg -i /tmp/ifupdown2_1.1-cl3u3_all.deb
+
+- name: reload networking
+  command: ifreload -a -v
+
+  #service: name=networking state=restarted enabled=yes
+
+#
+# setup Quagga
+#
+- name: copy Quagga daemons
+  copy: src=config/files/quagga/daemons dest=/etc/quagga/
+  
+- name: copy Quagga conf
+  copy: src=config/{{ansible_hostname}}/Quagga.conf dest=/etc/quagga/
+
+# Configure docker -- do not want iptables
+#
+- name: configure docker for systemd (1/2)
+  file: path=/etc/systemd/system/docker.service.d state=directory mode=0755
+
+- name: configure docker for systemd (2/2)
+  copy: src=config/files/docker/noiptables.conf dest=/etc/systemd/system/docker.service.d/noiptables.conf
+
+- name: copy docker installer
+  copy: src=config/files/docker/install dest=/tmp/install-docker
+
+- name: install docker package
+  command: bash /tmp/install-docker
+
+- name: copy docker setup
+  copy: src=config/files/docker/net-{{net}}/setup dest=/root/setup-docker mode=0755
+
+- name: download Cumulus quagga
+  command: docker pull cumulusnetworks/quagga:xenial-latest
+
+- name: copy quagga start script
+  copy: src=config/files/docker/start-quagga dest=/root/start-quagga mode=0755
+
+- name: start quagga
+  command: /root/start-quagga
+
+- name: run docker setup
+  command: /root/setup-docker
+
+- name: setup docker networking
+  command: bash /root/docker-cmds
+
+
+#
+# copy various commands (eg., netperf, verify network settings)
+#
+- name: Copy misc commands
+  copy: src=config/files/bin dest=/root

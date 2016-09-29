@@ -1,0 +1,93 @@
+#!/bin/bash
+
+cat > /root/docker-cmds <<EOF
+#!/bin/sh -e
+
+start_docker_vrf()
+{
+	local vrf=\$1
+	local id=\$2
+	local dockip=\$3
+	local dockgw=\$4
+	local name=deb-\${vrf}-\${id}
+
+	# create veth pair for container
+	local eth_name="dock-\${vrf}-\${id}"
+	ip link add \${eth_name} type veth peer name eth0-\${vrf}
+	ip link set \${eth_name} master \${vrf}
+	ip link set \${eth_name} up
+
+	# add route in vrf pointing to veth
+	# can't use the preferred 'vrf <name>' on ubuntu 16.04
+	ip ro add \${dockip}/32 table \${vrf} dev \${eth_name}
+
+	docker run -td --privileged --net=none --name \${name} debian /bin/bash
+	id=\$(docker ps -lq)
+
+	# find bash pid in new container: docker-containerd-shim \$id
+	ppid=\$(ps -e -o 'pid cmd' | awk  '\$2 = /docker-containerd-shim/ && \$3 ~ /^'\$id'/ {print \$1}')
+	pid=\$(ps -e -o 'pid ppid cmd' | awk -v ppid=\$ppid '\$2 == ppid && \$3 == "/bin/bash" {print \$1}')
+	ip li set eth0-\${vrf} netns \$pid
+
+	# configure networking in the container
+	# - addr on eth0, default route pointing to host IP
+	docker exec \${name} ip li set eth0-\${vrf} name eth0
+	docker exec \${name} ip addr add \${dockip}/32 dev eth0
+	docker exec \${name} ip li set eth0 up
+
+	# workaround until v4.8 kernel
+	nh=\$(ip ro show table \${vrf} | egrep 'nexthop' | sed -e 's/dev .*//' -e 's/nexthop via //')
+	def_arg=
+	for ip in \${nh}; do
+		docker exec \${name} ip ro add \${ip} dev eth0
+		def_arg="\${def_arg} nexthop via \${ip}"
+	done
+	docker exec \${name} ip ro add default \${def_arg}
+
+	#docker exec \${name} ip ro add \${dockgw} dev eth0
+	#docker exec \${name} ip ro add default via \${dockgw} dev eth0 src \${dockip}
+}
+
+################################################################################
+#
+
+HOST=\$(hostname)
+HOSTID=\${HOST/host-/}
+
+VRF="\$1"
+CONID="\$2"
+
+case "\${VRF}" in
+	red)  N=\$((100 + \${HOSTID}))
+	      start_docker_vrf red  \${CONID} 172.16.\${N}.\${CONID} 172.16.\${N}.254
+	      ;;
+
+	blue) N=\$((200 + \${HOSTID}))
+	      start_docker_vrf blue \${CONID} 172.16.\${N}.\${CONID} 172.16.\${N}.254
+	      ;;
+
+	# initialization
+	*) N=\$((100 + \${HOSTID}))
+	   ip addr add dev red 172.16.\${N}.254
+
+	   N=\$((200 + \${HOSTID}))
+	   ip addr add dev blue 172.16.\${N}.254
+
+	   ###########################################################
+	   # needed until v4.8 kernel on host
+	   sysctl -w net.ipv4.conf.all.proxy_arp=1
+
+	   sed -i '/ redistribute connected/a \ redistribute kernel' /etc/quagga/Quagga.conf
+	   docker cp /etc/quagga/Quagga.conf Quagga:/etc/quagga/Quagga.conf
+	   docker exec -t Quagga /usr/lib/quagga/quagga stop
+	   docker exec -t Quagga /usr/lib/quagga/quagga start &
+
+	   # end workaround
+	   ###########################################################
+
+	   ;;
+esac
+
+EOF
+
+exit 0
