@@ -54,13 +54,11 @@ configure spine and leaf nodes
 configure odd hosts to use bridges for container networking
     ansible-playbook configure.yml -e "net=bridge" -l host-[1-4]1
 
-configure even hosts use veth and /32 for container networking
+configure even hosts to use veth and /32 for container networking
     ansible-playbook configure.yml -e "net=veth" -l host-[1-4]2
 
-Start containers on hosts as desired
-
-e.g., create the first set of containers on all hosts that
-      are connected to VRF red
+Start containers on hosts as desired For example, create the first
+set of containers connected to VRF red on all hosts:
     ./run-host-cmd -v red -n 1
 
 Start second set
@@ -69,6 +67,16 @@ Start second set
 Similarly for VRF blue
     ./run-host-cmd -v blue -n 1
     ./run-host-cmd -v blue -n 2
+
+verify connectivity. Run ping in container 1 on host-11 in each VRF to each
+container on host-42:
+    ./run-host-cmd -v red  -n 1 -h host-11 -d 'ping -c1 -w1 172.16.142.1'
+    ./run-host-cmd -v red  -n 1 -h host-11 -d 'ping -c1 -w1 172.16.142.2'
+    ./run-host-cmd -v blue -n 1 -h host-11 -d 'ping -c1 -w1 172.16.242.1'
+    ./run-host-cmd -v blue -n 1 -h host-11 -d 'ping -c1 -w1 172.16.242.2'
+
+and cross-VRF fails:
+    ./run-host-cmd -v red  -n 1 -h host-11 -d 'ping -c1 -w1 172.16.242.1'
 
 
 Container Addresses
