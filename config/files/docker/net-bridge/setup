@@ -25,12 +25,12 @@ if [ -z "\${VRF}" ]; then
 			blue) N=\$((200 + \${HOSTID}));;
 		esac
 
-		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.0/28 --ipv6 br-\${vrf}-1)
+		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.0/28 br-\${vrf}-1)
 		if [ \$? -eq 0 ]; then
 			ip link set br-\${brid:0:12} master \${vrf}
 		fi
 
-		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.16/28 --ipv6 br-\${vrf}-2)
+		brid=\$(docker network create -d bridge --subnet=172.16.\${N}.16/28 br-\${vrf}-2)
 		if [ \$? -eq 0 ]; then
 			ip link set br-\${brid:0:12} master \${vrf}
 		fi
