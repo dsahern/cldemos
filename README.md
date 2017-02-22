@@ -23,6 +23,8 @@ iproute2 version in Ubuntu 16.04 (table id to vrf name), add the cumulus
 user, to install lldpd and perf on all nodes and a few workaround using
 the vagrant box image for Ubuntu 16.04.
 
+Vagrant versionis 1.8.5 and 1.8.6 are known to work.
+
 
 Ansible
 -------
@@ -35,6 +37,8 @@ node is specified by adding -e 'net=<value>' arg:
     ansible-playbook configure.yml -e "net=bridge" -l host-11
     ansible-playbook configure.yml -e "net=veth"   -l host-12
 
+Requires newer version (2.1.1 and 2.2.1 are known to work; 1.9.4 does not
+work)
 
 Helper script
 -------------
@@ -57,7 +61,7 @@ configure odd hosts to use bridges for container networking
 configure even hosts to use veth and /32 for container networking
     ansible-playbook configure.yml -e "net=veth" -l host-[1-4]2
 
-Start containers on hosts as desired For example, create the first
+Start containers on hosts as desired. For example, create the first
 set of containers connected to VRF red on all hosts:
     ./run-host-cmd -v red -n 1
 
