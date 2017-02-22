@@ -27,6 +27,10 @@
 - name: copy ifupdown2 package
   copy: src=config/files/packages/ifupdown2_1.1-cl3u3_all.deb dest=/tmp
 
+- name: remove ifupdown
+  apt: name=ifupdown state=absent
+  ignore_errors: yes
+
 - name: install ifupdown2 package
   command: dpkg -i /tmp/ifupdown2_1.1-cl3u3_all.deb
 
