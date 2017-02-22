@@ -549,7 +549,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-12 #####
   config.vm.define "host-12" do |device|
     device.vm.hostname = "host-12"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -602,7 +602,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-11 #####
   config.vm.define "host-11" do |device|
     device.vm.hostname = "host-11"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -652,7 +652,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-22 #####
   config.vm.define "host-22" do |device|
     device.vm.hostname = "host-22"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -703,7 +703,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-21 #####
   config.vm.define "host-21" do |device|
     device.vm.hostname = "host-21"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -754,7 +754,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-21 #####
   config.vm.define "host-21" do |device|
     device.vm.hostname = "host-21"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -805,7 +805,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-31 #####
   config.vm.define "host-31" do |device|
     device.vm.hostname = "host-31"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -855,7 +855,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-32 #####
   config.vm.define "host-32" do |device|
     device.vm.hostname = "host-32"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -905,7 +905,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-41 #####
   config.vm.define "host-41" do |device|
     device.vm.hostname = "host-41"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
@@ -955,7 +955,7 @@ Vagrant.configure("2") do |config|
   ##### DEFINE VM for host-42 #####
   config.vm.define "host-42" do |device|
     device.vm.hostname = "host-42"
-    device.vm.box = "boxcutter/ubuntu1604"
+    device.vm.box = "yk0/ubuntu-xenial"
     
     # disabling sync folder support on all VMs
     #   see note here: https://github.com/pradels/vagrant-libvirt#synced-folders
