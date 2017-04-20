@@ -4,7 +4,7 @@
 docker rm  Quagga > /dev/null 2>&1
 
 # start new one
-docker run -td --net=host --privileged --name Quagga cumulusnetworks/quagga:xenial-latest
+docker run -td --net=host --privileged --name Quagga cumulusnetworks/quagga:CL3.0.0
 
 docker cp /etc/quagga/daemons Quagga:/etc/quagga/daemons
 docker cp /etc/quagga/Quagga.conf Quagga:/etc/quagga/Quagga.conf

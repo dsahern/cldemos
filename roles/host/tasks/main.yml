@@ -66,7 +66,7 @@
   copy: src=config/files/docker/net-{{net}}/setup dest=/root/setup-docker mode=0755
 
 - name: download Cumulus quagga
-  command: docker pull cumulusnetworks/quagga:xenial-latest
+  command: docker pull cumulusnetworks/quagga:CL3.0.0
 
 - name: copy quagga start script
   copy: src=config/files/docker/start-quagga dest=/root/start-quagga mode=0755
